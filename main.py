@@ -207,6 +207,6 @@ def run7(inversion):
     # print(drawer())
 
 
-run8(inversion = 6)
-#run7(inversion=6)
+#run8(inversion = 6)
+run7(inversion=6)
 # print(grover7(inversion=5))
