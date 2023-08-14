@@ -73,10 +73,14 @@ def grover7(inversion):
     Coracle(inversion=inversion, wires=[0, 1, 2, 3, 6])
     Cdiffuser(wires=[0, 1, 2, 3, 6])
 
-    qml.adjoint(qml.QFT(wires=[4, 5, 6]))
+    #qml.adjoint(qml.QFT(wires=[4, 5, 6]))
+    #qml.QFT(wires=[4, 5, 6])
+
     # qml.Permute([0, 1, 2, 3, 6, 5, 4, 7], dev1.wires)
     # qml.Permute([1, 2, 3, 0, 5, 4, 6, 7], dev1.wires)
     qml.Permute([1, 2, 3, 0, 6, 5, 4, 7], dev1.wires)  # video
+    qml.QFT(wires=[6, 5, 4])
+    #qml.Permute([0, 1, 2, 3, 4, 6, 5, 7], dev1.wires)
     # return qml.probs(wires=[4, 5, 6])
     return qml.probs(range(7))
 

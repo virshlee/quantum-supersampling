@@ -18,15 +18,11 @@ class Oracle4(qml.operation.Operation):
         return [
             qml.CZ(wires=[0, 2]),
             qml.CZ(wires=[1, 3]),
-            #qml.RX(np.pi, wires=1),
             qml.PauliX(wires=1),
             qml.PauliX(wires=3),
-            #qml.RX(np.pi, wires=3),
             qml.CCZ(wires=[1, 2, 3]),
             qml.PauliX(wires=1),
             qml.PauliX(wires=3),
-            #qml.RX(np.pi, wires=1),
-            #qml.RX(np.pi, wires=3),
         ]
 
 
