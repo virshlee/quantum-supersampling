@@ -66,7 +66,7 @@ def grover4():
     Diffuser0(wires=[0, 1, 2, 3])
     Oracle4(wires=[0, 1, 2, 3])
     Diffuser0(wires=[0, 1, 2, 3])
-    #qml.Permute([3, 0, 1, 2], dev1.wires)
+    qml.Permute([3, 0, 1, 2], dev1.wires)
     return qml.probs(wires=range(4))
 
 
