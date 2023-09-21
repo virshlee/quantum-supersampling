@@ -208,3 +208,5 @@ class Diffuser(qml.operation.Operation):
             qml.Hadamard(wires=2),
             qml.Hadamard(wires=3),
         ]
+
+

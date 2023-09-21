@@ -55,6 +55,10 @@ class Diffuser0(qml.operation.Operation):
 
 @qml.qnode(dev1, interface="autograd")
 def grover4():
+    weights = [0, 1/2, 1/4, 1/4]
+    qml.ArbitraryStatePreparation(weights, wires=[0, 1, 2, 3])
+    """
+    
 
     qml.Hadamard(wires=0)
     qml.Hadamard(wires=1)
@@ -67,6 +71,8 @@ def grover4():
     Oracle4(wires=[0, 1, 2, 3])
     Diffuser0(wires=[0, 1, 2, 3])
     qml.Permute([3, 0, 1, 2], dev1.wires)
+    """
+
     return qml.probs(wires=range(4))
 
 
