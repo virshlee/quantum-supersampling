@@ -41,7 +41,7 @@ class Oracle4(qml.operation.Operation):
     @staticmethod
     def compute_decomposition(wires):
         return [
-            qml.IntegerComparator(value=12,geq=False,wires=range(5)),
+            qml.IntegerComparator(value=5,geq=False,wires=range(5)),
             qml.CZ(wires=[4, 0]),
             qml.CZ(wires=[4, 1]),
             qml.CZ(wires=[4, 2]),

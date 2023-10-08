@@ -1,7 +1,82 @@
+import math
 from functools import lru_cache
 
 import pennylane as qml
 from pennylane import numpy as np
+from scipy import sparse
+
+
+class Uv(qml.operation.Operation):
+    num_wires = 3
+    num_params = 0
+
+    @staticmethod
+    def compute_decomposition(wires):
+        return [
+            qml.RX(np.pi, wires=wires[1]),
+            qml.Toffoli(wires=wires),
+            qml.CNOT(wires=[wires[0], wires[1]]),
+        ]
+
+class U0(qml.operation.Operation):
+    num_wires = 3
+    num_params = 0
+
+    @staticmethod
+    def compute_decomposition(wires):
+        return [
+            qml.RX(np.pi, wires=wires[1]),
+            qml.Toffoli(wires=wires),
+            qml.RX(np.pi, wires=wires[1]),
+
+        ]
+
+    def adjoint(self):
+        return [
+            qml.RX.adjoint(np.pi, wires=self.wires[1]),
+            qml.Toffoli.adjoint(wires=self.wires),
+            qml.RX.adjoint(np.pi, wires=self.wires[1]),
+        ]
+
+class Comparator3bit(qml.operation.Operation):
+    num_wires = 9
+    num_params = 0
+
+    @staticmethod
+    def compute_decomposition(wires):
+        return [
+            Uv(wires=["a1", "b1", "target1"]),
+            Uv(wires=["a2", "b2", "target2"]),
+            Uv(wires=["a3", "b3", "target3"]),
+            qml.Toffoli(wires=["b1", "target2", "target1"]),
+            U0(wires=["a2", "b2", "target2"]),
+            qml.Toffoli(wires=["b1", "b2", "target2"]),
+            qml.Toffoli(wires=["target2", "target3", "target1"]),
+            U0(wires=["a3", "b3", "target3"]),
+            qml.Toffoli(wires=["target2", "b2", "target3"]),
+        ]
+
+
+class COMP(qml.operation.Operation):
+    num_wires = 12
+    num_params = 0
+
+    @staticmethod
+    def compute_decomposition(wires):
+        return [
+            Uv(wires=["a1", "b1", "target1"]),
+            Uv(wires=["a2", "b2", "target2"]),
+            Uv(wires=["a3", "b3", "target3"]),
+            Uv(wires=["a4", "b4", "target4"]),
+            qml.Toffoli(wires=["b1", "target2", "target1"]),
+            U0(wires=["a2", "b2", "target2"]),
+            qml.Toffoli(wires=["b1", "b2", "target2"]),
+            qml.Toffoli(wires=["target3", "target2", "target1"]),
+            U0(wires=["a3", "b3", "target3"]),
+            qml.Toffoli(wires=["target2", "b2", "target3"]),
+            qml.Toffoli(wires=["target4", "target3", "target1"]),
+        ]
+
 
 class CCCZ(qml.operation.Operation):
     num_wires = 4
@@ -44,6 +119,8 @@ class CCCZ(qml.operation.Operation):
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1],
             ]
         )
+
+
 class CCCCZ(qml.operation.Operation):
     num_wires = 5
     num_params = 0
@@ -208,5 +285,45 @@ class Diffuser(qml.operation.Operation):
             qml.Hadamard(wires=2),
             qml.Hadamard(wires=3),
         ]
+
+
+class Of(qml.operation.Operation):
+    """
+    this gate implements the function
+    mapping:
+    |x>|0> --->|x>|f(x)>
+    """
+    num_wires = 4
+    num_params = 0
+
+    @staticmethod
+    @lru_cache()
+    def compute_matrix():  # pylint: disable=arguments-differ
+        m = np.zeros((16, 16))
+        for i in range(16):
+            j = int(math.pow(i, 2) / 16)
+            m[j, i] = 1
+            np.linalg.det(m);
+            return m
+
+
+class COMP(qml.operation.Operation):
+    """
+    this gate implements the comparison between two states
+    |a>|b>|0> ---> |a>|b>|a<b>
+    """
+    num_wires = 12
+    num_params = 0
+
+    @staticmethod
+    @lru_cache()
+    def compute_matrix():  # pylint: disable=arguments-differ
+        m = np.zeros((16, 16))
+        for i in range(16):
+            j = int(math.pow(i, 2) / 16)
+            m[j, i] = 1
+            np.linalg.det(m);
+        return m
+
 
 
